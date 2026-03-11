@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.ListView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.mobile.R
 
@@ -14,7 +14,6 @@ class BookmarksFragment : Fragment() {
 
     private val bookmarks = mutableListOf<String>()
     private lateinit var adapter: ArrayAdapter<String>
-    private lateinit var emptyText: TextView
     private lateinit var listView: ListView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,12 +31,12 @@ class BookmarksFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? AppCompatActivity)?.setSupportActionBar(view.findViewById(R.id.toolbar))
-        emptyText = view.findViewById(R.id.empty_text)
+        val toolbar = view.findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+        (activity as? AppCompatActivity)?.setSupportActionBar(toolbar)
+        ContextCompat.getDrawable(requireContext(), R.drawable.ic_menuicon)?.let { toolbar.setOverflowIcon(it) }
         listView = view.findViewById(R.id.bookmarks_list)
         adapter = ArrayAdapter(requireContext(), R.layout.item_bookmark, android.R.id.text1, bookmarks)
         listView.adapter = adapter
-        updateEmptyState()
     }
 
     override fun onDestroyView() {
@@ -73,21 +72,10 @@ class BookmarksFragment : Fragment() {
                 if (name.isNotEmpty()) {
                     bookmarks.add(name)
                     adapter.notifyDataSetChanged()
-                    updateEmptyState()
                 }
             }
             .setNegativeButton(android.R.string.cancel, null)
             .show()
-    }
-
-    private fun updateEmptyState() {
-        if (bookmarks.isEmpty()) {
-            emptyText.visibility = View.VISIBLE
-            listView.visibility = View.GONE
-        } else {
-            emptyText.visibility = View.GONE
-            listView.visibility = View.VISIBLE
-        }
     }
 }
 
