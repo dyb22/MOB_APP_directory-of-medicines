@@ -20,6 +20,7 @@
     <string name="search_hint">Введите название лекарства</string>
     <string name="search_button">Искать</string>
     <string name="search_results_title">Результаты поиска</string>
+    <string name="search_nothing_found">Ничего не нашлось</string>
 
     <!-- History -->
     <string name="history_title">История поиска</string>

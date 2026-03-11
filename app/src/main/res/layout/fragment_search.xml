@@ -56,6 +56,20 @@
         android:textColor="@color/black"
         android:visibility="gone" />
 
+    <TextView
+        android:id="@+id/text_nothing_found"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:paddingBottom="280dp"
+        android:text="@string/search_nothing_found"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:visibility="gone" />
+
     <ListView
         android:id="@+id/search_results_list"
         android:layout_width="match_parent"

@@ -31,6 +31,7 @@ class SearchFragment : Fragment() {
     private lateinit var searchInput: EditText
     private lateinit var cameraButton: ImageButton
     private lateinit var resultsTitle: TextView
+    private lateinit var nothingFoundText: TextView
     private lateinit var resultsList: ListView
     private lateinit var resultsAdapter: SearchResultsAdapter
 
@@ -48,6 +49,7 @@ class SearchFragment : Fragment() {
         searchInput = view.findViewById(R.id.search_input)
         cameraButton = view.findViewById(R.id.button_camera)
         resultsTitle = view.findViewById(R.id.text_results_title)
+        nothingFoundText = view.findViewById(R.id.text_nothing_found)
         resultsList = view.findViewById(R.id.search_results_list)
 
         resultsAdapter = SearchResultsAdapter(
@@ -89,7 +91,10 @@ class SearchFragment : Fragment() {
     }
 
     private fun renderState(state: SearchUiState) {
-        resultsTitle.visibility = if (state.hasSearched) View.VISIBLE else View.GONE
+        val hasResults = state.results.isNotEmpty()
+        resultsTitle.visibility = if (state.hasSearched && hasResults) View.VISIBLE else View.GONE
+        nothingFoundText.visibility = if (state.hasSearched && !hasResults) View.VISIBLE else View.GONE
+        resultsList.visibility = if (state.hasSearched && hasResults) View.VISIBLE else View.GONE
         resultsAdapter.clear()
         resultsAdapter.addAll(state.results)
         resultsAdapter.notifyDataSetChanged()
