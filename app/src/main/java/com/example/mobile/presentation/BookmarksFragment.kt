@@ -35,7 +35,7 @@ class BookmarksFragment : Fragment() {
         (activity as? AppCompatActivity)?.setSupportActionBar(view.findViewById(R.id.toolbar))
         emptyText = view.findViewById(R.id.empty_text)
         listView = view.findViewById(R.id.bookmarks_list)
-        adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, bookmarks)
+        adapter = ArrayAdapter(requireContext(), R.layout.item_bookmark, android.R.id.text1, bookmarks)
         listView.adapter = adapter
         updateEmptyState()
     }
