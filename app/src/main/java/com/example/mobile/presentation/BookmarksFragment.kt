@@ -6,6 +6,7 @@ import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.mobile.R
 
@@ -26,13 +27,22 @@ class BookmarksFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_bookmarks, container, false)
+        return inflater.inflate(R.layout.fragment_bookmarks, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        (activity as? AppCompatActivity)?.setSupportActionBar(view.findViewById(R.id.toolbar))
         emptyText = view.findViewById(R.id.empty_text)
         listView = view.findViewById(R.id.bookmarks_list)
         adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, bookmarks)
         listView.adapter = adapter
         updateEmptyState()
-        return view
+    }
+
+    override fun onDestroyView() {
+        (activity as? AppCompatActivity)?.setSupportActionBar(null)
+        super.onDestroyView()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
