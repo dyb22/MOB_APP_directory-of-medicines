@@ -1,0 +1,46 @@
+package com.example.mobile.presentation.search
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.domain.usecase.drug.SearchDrugsUseCase
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+
+class SearchViewModel(
+    private val searchDrugsUseCase: SearchDrugsUseCase
+) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(SearchUiState())
+    val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
+
+    private var searchJob: Job? = null
+
+    fun onQueryChanged(query: String) {
+        _uiState.value = _uiState.value.copy(query = query)
+    }
+
+    fun onSearchClicked() {
+        val query = _uiState.value.query
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                isLoading = true,
+                hasSearched = true
+            )
+            runCatching {
+                searchDrugsUseCase(query)
+            }.onSuccess { drugs ->
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    results = drugs
+                )
+            }.onFailure {
+                _uiState.value = _uiState.value.copy(isLoading = false)
+            }
+        }
+    }
+}
+

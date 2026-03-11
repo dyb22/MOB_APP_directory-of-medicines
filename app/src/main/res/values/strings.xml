@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">Mobile</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_search">Поиск</string>
+    <string name="nav_bookmarks">Закладки</string>
+    <string name="nav_history">История</string>
+    <string name="nav_profile">Профиль</string>
+
+    <!-- Bookmarks -->
+    <string name="bookmarks_title">Закладки</string>
+    <string name="bookmarks_menu_create">Создать новую закладку</string>
+    <string name="bookmarks_dialog_title">Новая закладка</string>
+    <string name="bookmarks_dialog_hint">Название закладки</string>
+    <string name="bookmarks_dialog_create">Создать</string>
+    <string name="bookmarks_empty">Закладок пока нет</string>
+
+    <!-- Search -->
+    <string name="search_title">Поиск</string>
+    <string name="search_hint">Введите название лекарства</string>
+    <string name="search_button">Искать</string>
+    <string name="search_results_title">Результаты поиска</string>
+
+    <!-- History -->
+    <string name="history_title">История поиска</string>
+    <string name="history_empty">История пуста</string>
+
+    <!-- Profile / Auth -->
+    <string name="profile_title">Профиль</string>
+    <string name="profile_app_title">Онлайн-справочник лекарств</string>
+    <string name="profile_login_instruction">Введите ваш логин и пароль</string>
+    <string name="profile_email_hint">email@domain.com</string>
+    <string name="profile_password_hint">Abc2345</string>
+    <string name="profile_login_button">Продолжить</string>
+    <string name="profile_register_button">Зарегистрироваться</string>
+    <string name="profile_logout_button">Выйти</string>
+    <string name="profile_user_name_example">Юрамба</string>
+</resources>

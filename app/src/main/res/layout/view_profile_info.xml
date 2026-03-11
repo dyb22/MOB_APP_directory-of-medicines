@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="24dp">
+
+        <!-- Заголовок "Профиль" -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/profile_title"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="@color/black" />
+
+        <!-- Заголовок приложения -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:text="@string/profile_app_title"
+            android:textAppearance="?attr/textAppearanceHeadlineMedium"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- Аватар -->
+        <FrameLayout
+            android:layout_width="244dp"
+            android:layout_height="242dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp">
+
+            <FrameLayout
+                android:layout_width="244dp"
+                android:layout_height="240dp"
+                android:layout_gravity="center"
+                android:background="@color/profile_avatar_bg" />
+        </FrameLayout>
+
+        <!-- Имя пользователя -->
+        <TextView
+            android:id="@+id/text_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:text="@string/profile_user_name_example"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="@color/black" />
+
+        <!-- Кнопка выхода -->
+        <Button
+            android:id="@+id/button_logout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_button_black"
+            app:backgroundTint="@null"
+            android:text="@string/profile_logout_button"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+</ScrollView>
+
