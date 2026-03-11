@@ -21,7 +21,7 @@ class SearchViewModel(
     fun onQueryChanged(query: String) {
         _uiState.value = _uiState.value.copy(query = query)
     }
-
+//rgrge
     fun onSearchClicked() {
         val query = _uiState.value.query
         searchJob?.cancel()
