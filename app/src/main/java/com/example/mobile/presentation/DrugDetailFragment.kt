@@ -56,7 +56,6 @@ class DrugDetailFragment : Fragment() {
 
         val item = drug ?: return
 
-        // Пока используем тот же синий плейсхолдер
         imageView.setImageResource(R.drawable.search_result_placeholder)
         manufacturerText.text = item.manufacturer
         nameText.text = item.name

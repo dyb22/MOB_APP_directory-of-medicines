@@ -8,7 +8,9 @@ data class DrugSearchResponseDto(
 
 data class DrugResultDto(
     @SerializedName("id") val id: String,
-    @SerializedName("openfda") val openFda: OpenFdaDto?
+    @SerializedName("openfda") val openFda: OpenFdaDto?,
+    @SerializedName("description") val description: List<String>?,
+    @SerializedName("indications_and_usage") val indicationsAndUsage: List<String>?
 )
 
 data class OpenFdaDto(
