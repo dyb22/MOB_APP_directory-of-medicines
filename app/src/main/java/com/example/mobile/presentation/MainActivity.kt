@@ -67,6 +67,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.navigation_history -> {
                     showFragment(historyFragment, TAG_HISTORY)
+                    // При каждом переходе на вкладку истории явно обновляем список
+                    historyFragment.refreshHistory()
                     true
                 }
                 R.id.navigation_profile -> {

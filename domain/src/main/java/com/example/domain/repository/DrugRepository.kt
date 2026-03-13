@@ -15,6 +15,7 @@ interface DrugRepository {
     suspend fun removeBookmark(id: String)
 
     suspend fun getSearchHistory(): List<SearchHistoryItem>
+    suspend fun addToSearchHistory(drug: Drug)
     suspend fun clearSearchHistory()
 }
 

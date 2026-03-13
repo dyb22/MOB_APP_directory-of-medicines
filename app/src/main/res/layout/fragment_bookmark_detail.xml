@@ -5,19 +5,33 @@
     android:orientation="vertical"
     android:background="@color/white">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/bookmarks_title"
+        android:textAppearance="?attr/textAppearanceTitleLarge"
+        android:textStyle="bold"
+        android:gravity="center_horizontal"
+        android:paddingBottom="8dp" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="24dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="8dp"
         android:paddingBottom="12dp">
 
         <ImageButton
             android:id="@+id/button_back"
-            android:layout_width="48dp"
+            android:layout_width="70dp"
             android:layout_height="48dp"
             android:background="@drawable/bg_back_button"
             android:scaleType="centerInside"
@@ -29,7 +43,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="8dp"
+            android:minHeight="48dp"
+            android:gravity="center"
+            android:paddingStart="4dp"
+            android:paddingEnd="8dp"
+            android:background="@drawable/bg_bookmark_title_outline"
             android:ellipsize="end"
             android:maxLines="1"
             android:textAppearance="?attr/textAppearanceTitleMedium"
@@ -37,14 +56,22 @@
 
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/drugs_list"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="8dp"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="16dp" />
+        android:background="@color/back_button_bg">
+
+        <ListView
+            android:id="@+id/drugs_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="8dp"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="16dp" />
+
+    </FrameLayout>
 
 </LinearLayout>

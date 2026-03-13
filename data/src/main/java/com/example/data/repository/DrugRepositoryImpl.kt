@@ -9,11 +9,15 @@ import com.example.domain.model.SearchHistoryItem
 import com.example.domain.repository.DrugRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.UUID
+
+private data class BookmarkFolder(
+    val id: String,
+    val name: String,
+    val drugs: MutableList<Drug>
+)
 
 /**
- * Реализация через OpenFDA Drug Label API.
- * Закладки хранятся в памяти (папки с названием и списком лекарств).
+ * Реализация через OpenFDA Drug Label API + простое хранение закладок в памяти.
  */
 class DrugRepositoryImpl(
     private val openFdaApi: DrugApiService = OpenFdaApiFactory.drugApiService
@@ -21,19 +25,22 @@ class DrugRepositoryImpl(
 
     private val searchCache = mutableMapOf<String, Drug>()
 
-    private data class BookmarkFolder(val id: String, val name: String, val drugs: MutableList<Drug> = mutableListOf())
-
+    // Папки закладок и их содержимое храним в памяти
     private val bookmarkFolders = mutableListOf<BookmarkFolder>()
+
+    // История просмотренных препаратов (только из экрана поиска)
+    private val searchHistory = mutableListOf<SearchHistoryItem>()
 
     override suspend fun searchDrugs(query: String): List<Drug> = withContext(Dispatchers.IO) {
         if (query.isBlank()) return@withContext emptyList<Drug>()
         val term = query.trim().replace("*", "")
         if (term.isEmpty()) return@withContext emptyList<Drug>()
-        val search = "openfda.brand_name:$term*"
+        // OpenFDA не поддерживает ведущий wildcard, поэтому используем префиксный поиск
+        val search = "openfda.brand_name:${term}*"
         try {
             val response = openFdaApi.searchDrugs(search = search, limit = 20)
-            val results = response.results ?: return@withContext emptyList<Drug>()
-            val list = results.map { it.toDomain() }
+            val results = response.results ?: emptyList()
+            val list = results.map { dto -> dto.toDomain() }
             searchCache.clear()
             list.forEach { searchCache[it.id] = it }
             list
@@ -47,25 +54,38 @@ class DrugRepositoryImpl(
         searchCache[id]
 
     override suspend fun getBookmarks(): List<Bookmark> =
-        bookmarkFolders.map { Bookmark(it.id, it.name) }
+        bookmarkFolders.map { Bookmark(id = it.id, name = it.name) }
 
     override suspend fun getDrugsInBookmark(bookmarkId: String): List<Drug> =
         bookmarkFolders.find { it.id == bookmarkId }?.drugs?.toList() ?: emptyList()
 
     override suspend fun addBookmark(bookmark: Bookmark) {
-        val id = bookmark.id.ifEmpty { UUID.randomUUID().toString() }
-        bookmarkFolders.add(BookmarkFolder(id, bookmark.name))
+        // Если id пустой — генерируем простой строковый id
+        val id = bookmark.id.takeIf { it.isNotBlank() } ?: (bookmarkFolders.size + 1).toString()
+        if (bookmarkFolders.any { it.id == id }) return
+        bookmarkFolders.add(BookmarkFolder(id = id, name = bookmark.name, drugs = mutableListOf()))
     }
 
     override suspend fun addDrugToBookmark(bookmarkId: String, drug: Drug) {
-        bookmarkFolders.find { it.id == bookmarkId }?.drugs?.add(drug)
+        val folder = bookmarkFolders.find { it.id == bookmarkId } ?: return
+        if (folder.drugs.any { it.id == drug.id }) return
+        folder.drugs.add(drug)
     }
 
     override suspend fun removeBookmark(id: String) {
         bookmarkFolders.removeAll { it.id == id }
     }
 
-    override suspend fun getSearchHistory(): List<SearchHistoryItem> = emptyList()
+    override suspend fun getSearchHistory(): List<SearchHistoryItem> =
+        searchHistory.sortedByDescending { it.viewedAtMillis }
 
-    override suspend fun clearSearchHistory() {}
+    override suspend fun addToSearchHistory(drug: Drug) {
+        // Удаляем старую запись для этого препарата, если была, и добавляем новую в начало
+        searchHistory.removeAll { it.drug.id == drug.id }
+        searchHistory.add(0, SearchHistoryItem(drug = drug, viewedAtMillis = System.currentTimeMillis()))
+    }
+
+    override suspend fun clearSearchHistory() {
+        searchHistory.clear()
+    }
 }

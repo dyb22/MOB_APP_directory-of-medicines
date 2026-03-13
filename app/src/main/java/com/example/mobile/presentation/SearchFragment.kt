@@ -58,12 +58,14 @@ class SearchFragment : Fragment() {
         resultsAdapter.onAddToBookmark = { drug ->
             (activity as? MainActivity)?.requestAddDrugToBookmark(drug)
         }
-        resultsList.adapter = resultsAdapter
-
-        resultsList.setOnItemClickListener { _, _, position, _ ->
-            val item = resultsAdapter.getItem(position) ?: return@setOnItemClickListener
-            (activity as? MainActivity)?.openDrugDetail(item)
+        resultsAdapter.onItemClick = { drug ->
+            // В историю попадают только препараты, открытые с экрана поиска
+            viewLifecycleOwner.lifecycleScope.launch {
+                AppContainer.drugRepository.addToSearchHistory(drug)
+            }
+            (activity as? MainActivity)?.openDrugDetail(drug)
         }
+        resultsList.adapter = resultsAdapter
 
         // Пока кнопка с иконкой камеры просто запускает поиск по введённому тексту
         cameraButton.setOnClickListener {

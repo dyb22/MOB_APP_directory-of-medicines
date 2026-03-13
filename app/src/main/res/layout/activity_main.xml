@@ -18,7 +18,7 @@
         android:id="@+id/bottom_navigation"
         style="@style/Widget.Mobile.BottomNavigationView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         app:itemBackground="@drawable/bg_bottom_nav_item_selector"
         app:itemRippleColor="@android:color/transparent"
         app:labelVisibilityMode="unlabeled"

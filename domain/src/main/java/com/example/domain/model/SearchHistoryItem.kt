@@ -1,10 +1,11 @@
 package com.example.domain.model
 
-import java.time.Instant
-
+/**
+ * Элемент истории просмотров: конкретный препарат и момент просмотра.
+ * Используем обычный timestamp в миллисекундах, чтобы избежать проблем с java.time на старых устройствах.
+ */
 data class SearchHistoryItem(
-    val id: String,
-    val query: String,
-    val viewedAt: Instant
+    val drug: Drug,
+    val viewedAtMillis: Long
 )
 
