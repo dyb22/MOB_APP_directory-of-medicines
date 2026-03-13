@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.example.data.repository.DrugRepositoryImpl
+import com.example.mobile.di.AppContainer
 import com.example.domain.usecase.drug.SearchDrugsUseCase
 import com.example.mobile.R
 import com.example.mobile.presentation.search.SearchResultsAdapter
@@ -23,8 +23,7 @@ import kotlinx.coroutines.launch
 class SearchFragment : Fragment() {
 
     private val viewModel: SearchViewModel by viewModels {
-        val repository = DrugRepositoryImpl()
-        val useCase = SearchDrugsUseCase(repository)
+        val useCase = SearchDrugsUseCase(AppContainer.drugRepository)
         SearchViewModelFactory(useCase)
     }
 
@@ -56,15 +55,14 @@ class SearchFragment : Fragment() {
             requireContext(),
             mutableListOf()
         )
+        resultsAdapter.onAddToBookmark = { drug ->
+            (activity as? MainActivity)?.requestAddDrugToBookmark(drug)
+        }
         resultsList.adapter = resultsAdapter
 
         resultsList.setOnItemClickListener { _, _, position, _ ->
             val item = resultsAdapter.getItem(position) ?: return@setOnItemClickListener
-            val fragment = DrugDetailFragment.newInstance(item)
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
-                .commit()
+            (activity as? MainActivity)?.openDrugDetail(item)
         }
 
         // Пока кнопка с иконкой камеры просто запускает поиск по введённому тексту

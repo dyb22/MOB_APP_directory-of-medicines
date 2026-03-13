@@ -16,15 +16,19 @@ class SearchResultsAdapter(
 
     private val inflater = LayoutInflater.from(context)
 
+    var onAddToBookmark: ((Drug) -> Unit)? = null
+
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = convertView ?: inflater.inflate(R.layout.item_search_result, parent, false)
 
         val item = getItem(position) ?: return view
 
+        val addToBookmarkButton = view.findViewById<android.widget.ImageButton>(R.id.button_add_to_bookmark)
         val manufacturerText = view.findViewById<TextView>(R.id.text_manufacturer)
         val nameText = view.findViewById<TextView>(R.id.text_name)
         val priceText = view.findViewById<TextView>(R.id.text_price)
 
+        addToBookmarkButton.setOnClickListener { onAddToBookmark?.invoke(item) }
         manufacturerText.text = item.manufacturer.ifBlank { "" }
         nameText.text = item.name
         priceText.text = item.price

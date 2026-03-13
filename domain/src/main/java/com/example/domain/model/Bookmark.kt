@@ -1,8 +1,10 @@
 package com.example.domain.model
 
+/**
+ * Папка закладок (название категории). Внутри — список лекарств.
+ */
 data class Bookmark(
     val id: String,
-    val drugId: String,
-    val title: String
+    val name: String
 )
 

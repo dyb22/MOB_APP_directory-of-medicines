@@ -9,7 +9,9 @@ interface DrugRepository {
     suspend fun getDrugById(id: String): Drug?
 
     suspend fun getBookmarks(): List<Bookmark>
+    suspend fun getDrugsInBookmark(bookmarkId: String): List<Drug>
     suspend fun addBookmark(bookmark: Bookmark)
+    suspend fun addDrugToBookmark(bookmarkId: String, drug: Drug)
     suspend fun removeBookmark(id: String)
 
     suspend fun getSearchHistory(): List<SearchHistoryItem>
