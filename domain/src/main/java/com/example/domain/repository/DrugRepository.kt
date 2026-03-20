@@ -13,6 +13,7 @@ interface DrugRepository {
     suspend fun addBookmark(bookmark: Bookmark)
     suspend fun addDrugToBookmark(bookmarkId: String, drug: Drug)
     suspend fun removeBookmark(id: String)
+    suspend fun renameBookmark(bookmarkId: String, newName: String)
 
     suspend fun getSearchHistory(): List<SearchHistoryItem>
     suspend fun addToSearchHistory(drug: Drug)

@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.view.*
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -63,6 +64,61 @@ class BookmarksFragment : Fragment() {
             } else {
                 mainActivity.openBookmarkDetail(bookmark)
             }
+        }
+
+        listView.setOnItemLongClickListener { _, _, position, _ ->
+            val bookmark = adapter.getItem(position) ?: return@setOnItemLongClickListener false
+
+            val options = arrayOf(
+                getString(R.string.bookmarks_menu_delete),
+                getString(R.string.bookmarks_menu_rename)
+            )
+
+            AlertDialog.Builder(requireContext())
+                .setTitle(bookmark.name)
+                .setItems(options) { _, which ->
+                    when (which) {
+                        0 -> {
+                            // Delete
+                            AlertDialog.Builder(requireContext())
+                                .setMessage(R.string.bookmarks_dialog_delete_message)
+                                .setPositiveButton(R.string.bookmarks_dialog_delete_confirm) { _, _ ->
+                                    lifecycleScope.launch {
+                                        AppContainer.drugRepository.removeBookmark(bookmark.id)
+                                        loadBookmarks()
+                                    }
+                                }
+                                .setNegativeButton(android.R.string.cancel, null)
+                                .show()
+                        }
+                        else -> {
+                            // Rename
+                            val editText = EditText(requireContext()).apply {
+                                setText(bookmark.name)
+                                setSelection(bookmark.name.length)
+                                hint = getString(R.string.bookmarks_dialog_rename_hint)
+                            }
+
+                            AlertDialog.Builder(requireContext())
+                                .setTitle(R.string.bookmarks_dialog_rename_title)
+                                .setView(editText)
+                                .setPositiveButton(R.string.bookmarks_dialog_save) { _, _ ->
+                                    val newName = editText.text.toString().trim()
+                                    if (newName.isNotEmpty() && newName != bookmark.name) {
+                                        lifecycleScope.launch {
+                                            AppContainer.drugRepository.renameBookmark(bookmark.id, newName)
+                                            loadBookmarks()
+                                        }
+                                    }
+                                }
+                                .setNegativeButton(android.R.string.cancel, null)
+                                .show()
+                        }
+                    }
+                }
+                .show()
+
+            true
         }
     }
 

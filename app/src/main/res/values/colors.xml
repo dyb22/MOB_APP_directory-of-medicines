@@ -3,6 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="input_border">#FFE0E0E0</color>
+    <color name="error_red">#FFFF4D4D</color>
     <color name="profile_avatar_bg">#FFF2F2F2</color>
     <color name="nav_item_selected_bg">#FFBBDEFB</color>
     <!-- Светло-серый фон для поля поиска -->

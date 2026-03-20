@@ -13,6 +13,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.mobile.R
 import com.example.mobile.di.AppContainer
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
@@ -49,6 +52,14 @@ class ProfileFragment : Fragment() {
             val passwordInput = loginView.findViewById<EditText>(R.id.input_password)
             val loginButton = loginView.findViewById<Button>(R.id.button_login)
             val registerButton = loginView.findViewById<Button>(R.id.button_register)
+            val authErrorText = loginView.findViewById<TextView>(R.id.text_auth_error)
+
+            fun showAuthError(errorResId: Int) {
+                authErrorText.setText(errorResId)
+                authErrorText.visibility = View.VISIBLE
+            }
+
+            authErrorText.visibility = View.GONE
 
             loginButton.setOnClickListener {
                 val email = emailInput.text.toString().trim()
@@ -57,6 +68,8 @@ class ProfileFragment : Fragment() {
                     Toast.makeText(requireContext(), R.string.profile_login_instruction, Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
+
+                authErrorText.visibility = View.GONE
                 viewLifecycleOwner.lifecycleScope.launch {
                     try {
                         val user = AppContainer.userRepository.login(email, password)
@@ -64,7 +77,17 @@ class ProfileFragment : Fragment() {
                         userName = user.name
                         renderState(root)
                     } catch (e: Exception) {
-                        Toast.makeText(requireContext(), e.message ?: "Ошибка входа", Toast.LENGTH_SHORT).show()
+                        val errorRes = when (e) {
+                            is FirebaseAuthInvalidUserException,
+                            is FirebaseAuthInvalidCredentialsException -> R.string.profile_auth_error_invalid_credentials
+                            else -> null
+                        }
+
+                        if (errorRes != null) {
+                            showAuthError(errorRes)
+                        } else {
+                            Toast.makeText(requireContext(), e.message ?: "Ошибка входа", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
@@ -76,6 +99,8 @@ class ProfileFragment : Fragment() {
                     Toast.makeText(requireContext(), R.string.profile_login_instruction, Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
+
+                authErrorText.visibility = View.GONE
                 viewLifecycleOwner.lifecycleScope.launch {
                     try {
                         val user = AppContainer.userRepository.register(email, password)
@@ -83,7 +108,17 @@ class ProfileFragment : Fragment() {
                         userName = user.name
                         renderState(root)
                     } catch (e: Exception) {
-                        Toast.makeText(requireContext(), e.message ?: "Ошибка регистрации", Toast.LENGTH_SHORT).show()
+                        val errorRes = when (e) {
+                            is FirebaseAuthUserCollisionException -> R.string.profile_auth_error_user_already_exists
+                            is FirebaseAuthInvalidCredentialsException -> R.string.profile_auth_error_invalid_credentials
+                            else -> null
+                        }
+
+                        if (errorRes != null) {
+                            showAuthError(errorRes)
+                        } else {
+                            Toast.makeText(requireContext(), e.message ?: "Ошибка регистрации", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
@@ -102,6 +137,7 @@ class ProfileFragment : Fragment() {
                     loggedIn = false
                     userName = null
                     renderState(root)
+                    (activity as? MainActivity)?.refreshBookmarksAndHistory()
                 }
             }
 

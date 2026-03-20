@@ -10,9 +10,16 @@
     <!-- Bookmarks -->
     <string name="bookmarks_title">Закладки</string>
     <string name="bookmarks_menu_create">Создать новую закладку</string>
+    <string name="bookmarks_menu_rename">Переименовать закладку</string>
+    <string name="bookmarks_menu_delete">Удалить закладку</string>
     <string name="bookmarks_dialog_title">Новая закладка</string>
     <string name="bookmarks_dialog_hint">Название закладки</string>
     <string name="bookmarks_dialog_create">Создать</string>
+    <string name="bookmarks_dialog_rename_title">Переименовать закладку</string>
+    <string name="bookmarks_dialog_save">Сохранить</string>
+    <string name="bookmarks_dialog_rename_hint">Новое название закладки</string>
+    <string name="bookmarks_dialog_delete_message">Удалить закладку?</string>
+    <string name="bookmarks_dialog_delete_confirm">Удалить</string>
     <string name="bookmarks_empty">Закладок пока нет</string>
 
     <!-- Search -->
@@ -34,6 +41,8 @@
     <string name="profile_password_hint">Abc2345</string>
     <string name="profile_login_button">Продолжить</string>
     <string name="profile_register_button">Зарегистрироваться</string>
+    <string name="profile_auth_error_invalid_credentials">Данные введены неверно либо такого пользователя не существует</string>
+    <string name="profile_auth_error_user_already_exists">Пользователь с таким email уже существует</string>
     <string name="profile_logout_button">Выйти</string>
     <string name="profile_user_name_example">Юрамба</string>
 </resources>

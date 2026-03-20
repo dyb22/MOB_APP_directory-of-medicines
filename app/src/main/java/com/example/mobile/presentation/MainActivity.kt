@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager
 import com.example.domain.model.Bookmark
 import com.example.domain.model.Drug
 import com.example.mobile.R
+import com.example.mobile.di.AppContainer
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppContainer.init(applicationContext)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
@@ -95,6 +97,11 @@ class MainActivity : AppCompatActivity() {
             commit()
         }
         currentFragment = fragment
+    }
+
+    fun refreshBookmarksAndHistory() {
+        bookmarksFragment.refreshBookmarks()
+        historyFragment.refreshHistory()
     }
 
     /** Вызвать с экрана поиска: перейти на закладки и запомнить препарат для добавления. */

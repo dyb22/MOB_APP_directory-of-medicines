@@ -38,6 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="24dp"
+            android:gravity="center"
             android:text="@string/profile_login_instruction"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="@color/black" />
@@ -63,6 +64,20 @@
             android:hint="@string/profile_password_hint"
             android:inputType="textPassword"
             android:paddingHorizontal="16dp" />
+
+        <TextView
+            android:id="@+id/text_auth_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:paddingHorizontal="8dp"
+            android:text="@string/profile_auth_error_invalid_credentials"
+            android:textColor="@color/error_red"
+            android:textSize="12sp"
+            android:textStyle="normal"
+            android:textAlignment="center"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/button_login"
