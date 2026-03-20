@@ -3,6 +3,9 @@ package com.example.mobile.presentation.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.usecase.drug.SearchDrugsUseCase
+import java.net.ConnectException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,19 +31,39 @@ class SearchViewModel(
         searchJob = viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
                 isLoading = true,
-                hasSearched = true
+                hasSearched = true,
+                isNoNetwork = false
             )
             runCatching {
                 searchDrugsUseCase(query)
             }.onSuccess { drugs ->
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    results = drugs
+                    results = drugs,
+                    isNoNetwork = false
                 )
-            }.onFailure {
-                _uiState.value = _uiState.value.copy(isLoading = false)
+            }.onFailure { error ->
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    results = emptyList(),
+                    isNoNetwork = error.isNetworkError()
+                )
             }
         }
+    }
+
+    private fun Throwable.isNetworkError(): Boolean {
+        var current: Throwable? = this
+        while (current != null) {
+            if (current is UnknownHostException ||
+                current is ConnectException ||
+                current is SocketTimeoutException
+            ) {
+                return true
+            }
+            current = current.cause
+        }
+        return false
     }
 }
 

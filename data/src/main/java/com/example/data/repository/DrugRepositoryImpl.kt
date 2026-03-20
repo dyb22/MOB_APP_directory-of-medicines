@@ -17,6 +17,9 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.net.ConnectException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.util.UUID
 
 class DrugRepositoryImpl(
@@ -95,11 +98,26 @@ class DrugRepositoryImpl(
             list
         } catch (e: Exception) {
             searchCache.clear()
+            if (e.isNetworkError()) throw e
             emptyList()
         }
     }
 
     override suspend fun getDrugById(id: String): Drug? = searchCache[id]
+
+    private fun Throwable.isNetworkError(): Boolean {
+        var current: Throwable? = this
+        while (current != null) {
+            if (current is UnknownHostException ||
+                current is ConnectException ||
+                current is SocketTimeoutException
+            ) {
+                return true
+            }
+            current = current.cause
+        }
+        return false
+    }
 
     override suspend fun getBookmarks(): List<Bookmark> {
         val doc = userDoc()

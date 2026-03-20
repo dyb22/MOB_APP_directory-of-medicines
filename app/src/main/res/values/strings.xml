@@ -28,6 +28,9 @@
     <string name="search_button">Искать</string>
     <string name="search_results_title">Результаты поиска</string>
     <string name="search_nothing_found">Ничего не нашлось</string>
+    <string name="search_no_network">Нет доступа к сети</string>
+
+    <string name="loading">Загрузка</string>
 
     <!-- History -->
     <string name="history_title">История поиска</string>

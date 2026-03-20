@@ -6,6 +6,7 @@ data class SearchUiState(
     val query: String = "",
     val isLoading: Boolean = false,
     val results: List<Drug> = emptyList(),
-    val hasSearched: Boolean = false
+    val hasSearched: Boolean = false,
+    val isNoNetwork: Boolean = false
 )
 

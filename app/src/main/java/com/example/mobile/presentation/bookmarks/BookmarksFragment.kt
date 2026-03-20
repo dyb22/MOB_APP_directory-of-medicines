@@ -1,8 +1,13 @@
-package com.example.mobile.presentation
+package com.example.mobile.presentation.bookmarks
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ListView
@@ -13,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.domain.model.Bookmark
 import com.example.mobile.R
 import com.example.mobile.di.AppContainer
+import com.example.mobile.presentation.MainActivity
 import kotlinx.coroutines.launch
 
 class BookmarksFragment : Fragment() {
@@ -91,6 +97,7 @@ class BookmarksFragment : Fragment() {
                                 .setNegativeButton(android.R.string.cancel, null)
                                 .show()
                         }
+
                         else -> {
                             // Rename
                             val editText = EditText(requireContext()).apply {
@@ -157,12 +164,13 @@ class BookmarksFragment : Fragment() {
                 showCreateBookmarkDialog()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     private fun showCreateBookmarkDialog() {
-        val editText = android.widget.EditText(requireContext()).apply {
+        val editText = EditText(requireContext()).apply {
             hint = getString(R.string.bookmarks_dialog_hint)
         }
 
@@ -182,3 +190,4 @@ class BookmarksFragment : Fragment() {
             .show()
     }
 }
+

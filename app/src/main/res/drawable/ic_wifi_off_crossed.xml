@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- Wi-Fi arcs -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M10,22
+            C14,18 17,16 24,16
+            C31,16 34,18 38,22
+            L34,26
+            C31,23 28,21 24,21
+            C20,21 17,23 14,26
+            Z" />
+
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M15,27
+            C18,24 21,23 24,23
+            C27,23 30,24 33,27
+            L29,31
+            C27,29 26,28 24,28
+            C22,28 21,29 19,31
+            Z" />
+
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M20,32
+            C21.2,31.1 22.5,30.5 24,30.5
+            C25.5,30.5 26.8,31.1 28,32
+            L24,36
+            Z" />
+
+    <!-- Slash -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M12,10 L38,36 L36,38 L10,12 Z" />
+</vector>
+

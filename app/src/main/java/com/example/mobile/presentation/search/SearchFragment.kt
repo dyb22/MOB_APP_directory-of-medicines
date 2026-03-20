@@ -1,22 +1,23 @@
-package com.example.mobile.presentation
+package com.example.mobile.presentation.search
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ListView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.example.mobile.di.AppContainer
 import com.example.domain.usecase.drug.SearchDrugsUseCase
 import com.example.mobile.R
-import com.example.mobile.presentation.search.SearchResultsAdapter
-import com.example.mobile.presentation.search.SearchUiState
-import com.example.mobile.presentation.search.SearchViewModel
+import com.example.mobile.di.AppContainer
+import com.example.mobile.presentation.MainActivity
+import com.example.mobile.presentation.SearchViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -32,7 +33,10 @@ class SearchFragment : Fragment() {
     private lateinit var resultsTitle: TextView
     private lateinit var nothingFoundText: TextView
     private lateinit var resultsList: ListView
+    private lateinit var loadingOverlay: View
+    private lateinit var noNetworkContainer: View
     private lateinit var resultsAdapter: SearchResultsAdapter
+    private var lastUiState: SearchUiState? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,11 +49,21 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        view as FrameLayout
         searchInput = view.findViewById(R.id.search_input)
         cameraButton = view.findViewById(R.id.button_camera)
         resultsTitle = view.findViewById(R.id.text_results_title)
         nothingFoundText = view.findViewById(R.id.text_nothing_found)
         resultsList = view.findViewById(R.id.search_results_list)
+        loadingOverlay = view.findViewById(R.id.loading_overlay)
+        noNetworkContainer = view.findViewById(R.id.no_network_container)
+
+        // На всякий случай принудительно делаем оверлей полноэкранным.
+        loadingOverlay.layoutParams = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        loadingOverlay.bringToFront()
 
         resultsAdapter = SearchResultsAdapter(
             requireContext(),
@@ -67,9 +81,9 @@ class SearchFragment : Fragment() {
         }
         resultsList.adapter = resultsAdapter
 
-        // Пока кнопка с иконкой камеры просто запускает поиск по введённому тексту
+        // Кнопка камеры открывает системное приложение камеры.
         cameraButton.setOnClickListener {
-            triggerSearch()
+            openCamera()
         }
 
         // Запуск поиска по нажатию Enter (действие "Поиск" на клавиатуре)
@@ -80,9 +94,15 @@ class SearchFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collectLatest { state ->
+                lastUiState = state
                 renderState(state)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        lastUiState?.let { renderState(it) }
     }
 
     private fun triggerSearch() {
@@ -90,7 +110,33 @@ class SearchFragment : Fragment() {
         viewModel.onSearchClicked()
     }
 
+    private fun openCamera() {
+        val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
+        val packageManager = requireContext().packageManager
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent)
+        }
+    }
+
     private fun renderState(state: SearchUiState) {
+        if (state.isNoNetwork) {
+            showNoNetworkState()
+            return
+        }
+
+        noNetworkContainer.visibility = View.GONE
+
+        if (state.isLoading) {
+            loadingOverlay.visibility = View.VISIBLE
+            loadingOverlay.bringToFront()
+            resultsTitle.visibility = View.GONE
+            nothingFoundText.visibility = View.GONE
+            resultsList.visibility = View.GONE
+            return
+        }
+
+        loadingOverlay.visibility = View.GONE
+
         val hasResults = state.results.isNotEmpty()
         resultsTitle.visibility = if (state.hasSearched && hasResults) View.VISIBLE else View.GONE
         nothingFoundText.visibility = if (state.hasSearched && !hasResults) View.VISIBLE else View.GONE
@@ -99,4 +145,14 @@ class SearchFragment : Fragment() {
         resultsAdapter.addAll(state.results)
         resultsAdapter.notifyDataSetChanged()
     }
+
+    private fun showNoNetworkState() {
+        // Отключаем все элементы, оставляя только сообщение об отсутствии сети.
+        noNetworkContainer.visibility = View.VISIBLE
+        loadingOverlay.visibility = View.GONE
+        resultsTitle.visibility = View.GONE
+        nothingFoundText.visibility = View.GONE
+        resultsList.visibility = View.GONE
+    }
 }
+

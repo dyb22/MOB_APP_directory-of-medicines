@@ -11,6 +11,12 @@ import com.example.domain.model.Bookmark
 import com.example.domain.model.Drug
 import com.example.mobile.R
 import com.example.mobile.di.AppContainer
+import com.example.mobile.presentation.bookmarks.BookmarkDetailFragment
+import com.example.mobile.presentation.bookmarks.BookmarksFragment
+import com.example.mobile.presentation.drug.DrugDetailFragment
+import com.example.mobile.presentation.history.HistoryFragment
+import com.example.mobile.presentation.profile.ProfileFragment
+import com.example.mobile.presentation.search.SearchFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {

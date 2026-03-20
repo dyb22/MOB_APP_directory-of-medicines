@@ -1,4 +1,4 @@
-package com.example.mobile.presentation
+package com.example.mobile.presentation.bookmarks
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,6 +14,7 @@ import com.example.domain.model.Bookmark
 import com.example.domain.model.Drug
 import com.example.mobile.R
 import com.example.mobile.di.AppContainer
+import com.example.mobile.presentation.MainActivity
 import kotlinx.coroutines.launch
 
 class BookmarkDetailFragment : Fragment() {
@@ -99,3 +100,4 @@ class BookmarkDetailFragment : Fragment() {
         }
     }
 }
+

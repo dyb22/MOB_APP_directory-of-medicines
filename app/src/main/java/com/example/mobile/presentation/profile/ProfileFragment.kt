@@ -1,4 +1,4 @@
-package com.example.mobile.presentation
+package com.example.mobile.presentation.profile
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.mobile.R
 import com.example.mobile.di.AppContainer
+import com.example.mobile.presentation.MainActivity
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
@@ -54,6 +55,17 @@ class ProfileFragment : Fragment() {
             val registerButton = loginView.findViewById<Button>(R.id.button_register)
             val authErrorText = loginView.findViewById<TextView>(R.id.text_auth_error)
 
+            fun addAuthLoadingOverlay(): View {
+                val loadingView = inflater.inflate(R.layout.view_loading_overlay, root, false)
+                root.addView(loadingView)
+                loadingView.bringToFront()
+                return loadingView
+            }
+
+            fun removeAuthLoadingOverlay(loadingView: View) {
+                if (loadingView.parent == root) root.removeView(loadingView)
+            }
+
             fun showAuthError(errorResId: Int) {
                 authErrorText.setText(errorResId)
                 authErrorText.visibility = View.VISIBLE
@@ -70,16 +82,22 @@ class ProfileFragment : Fragment() {
                 }
 
                 authErrorText.visibility = View.GONE
+                loginButton.isEnabled = false
+                registerButton?.isEnabled = false
+                val loadingView = addAuthLoadingOverlay()
+
                 viewLifecycleOwner.lifecycleScope.launch {
                     try {
                         val user = AppContainer.userRepository.login(email, password)
                         loggedIn = true
                         userName = user.name
+                        removeAuthLoadingOverlay(loadingView)
                         renderState(root)
                     } catch (e: Exception) {
                         val errorRes = when (e) {
                             is FirebaseAuthInvalidUserException,
                             is FirebaseAuthInvalidCredentialsException -> R.string.profile_auth_error_invalid_credentials
+
                             else -> null
                         }
 
@@ -88,7 +106,10 @@ class ProfileFragment : Fragment() {
                         } else {
                             Toast.makeText(requireContext(), e.message ?: "Ошибка входа", Toast.LENGTH_SHORT).show()
                         }
+                        removeAuthLoadingOverlay(loadingView)
                     }
+                    loginButton.isEnabled = true
+                    registerButton?.isEnabled = true
                 }
             }
 
@@ -101,11 +122,16 @@ class ProfileFragment : Fragment() {
                 }
 
                 authErrorText.visibility = View.GONE
+                loginButton.isEnabled = false
+                registerButton.isEnabled = false
+                val loadingView = addAuthLoadingOverlay()
+
                 viewLifecycleOwner.lifecycleScope.launch {
                     try {
                         val user = AppContainer.userRepository.register(email, password)
                         loggedIn = true
                         userName = user.name
+                        removeAuthLoadingOverlay(loadingView)
                         renderState(root)
                     } catch (e: Exception) {
                         val errorRes = when (e) {
@@ -119,7 +145,10 @@ class ProfileFragment : Fragment() {
                         } else {
                             Toast.makeText(requireContext(), e.message ?: "Ошибка регистрации", Toast.LENGTH_SHORT).show()
                         }
+                        removeAuthLoadingOverlay(loadingView)
                     }
+                    loginButton.isEnabled = true
+                    registerButton.isEnabled = true
                 }
             }
 
@@ -145,3 +174,4 @@ class ProfileFragment : Fragment() {
         }
     }
 }
+

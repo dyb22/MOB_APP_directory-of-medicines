@@ -1,4 +1,4 @@
-package com.example.mobile.presentation
+package com.example.mobile.presentation.history
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.domain.model.Drug
 import com.example.mobile.R
 import com.example.mobile.di.AppContainer
+import com.example.mobile.presentation.MainActivity
 import com.example.mobile.presentation.search.SearchResultsAdapter
 import kotlinx.coroutines.launch
 
