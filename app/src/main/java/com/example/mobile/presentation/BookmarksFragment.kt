@@ -71,6 +71,11 @@ class BookmarksFragment : Fragment() {
         loadBookmarks()
     }
 
+    /** Обновить список закладок при переходе на вкладку (в т.ч. после выхода из профиля). */
+    fun refreshBookmarks() {
+        if (isAdded) loadBookmarks()
+    }
+
     private fun loadBookmarks() {
         lifecycleScope.launch {
             val list = AppContainer.drugRepository.getBookmarks()

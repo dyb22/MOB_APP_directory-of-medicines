@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "527053859523",
+    "project_id": "mobb-5829e",
+    "storage_bucket": "mobb-5829e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:527053859523:android:7eaa6a0878fc1284c79076",
+        "android_client_info": {
+          "package_name": "com.example.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByJ969WbpSftfc5uQuEhS1QCHukkb4Z6o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

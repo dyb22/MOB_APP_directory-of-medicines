@@ -63,6 +63,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.navigation_bookmarks -> {
                     showFragment(bookmarksFragment, TAG_BOOKMARKS)
+                    bookmarksFragment.refreshBookmarks()
                     true
                 }
                 R.id.navigation_history -> {
