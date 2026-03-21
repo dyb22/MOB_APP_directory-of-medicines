@@ -6,6 +6,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+
 object OpenFdaApiFactory {
 
     private const val BASE_URL = "https://api.fda.gov/"

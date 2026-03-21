@@ -11,6 +11,10 @@ import androidx.fragment.app.Fragment
 import com.example.domain.model.Drug
 import com.example.mobile.R
 
+/**
+ * Карточка препарата: название, производитель, цена, описание.
+ * Открывается поверх поиска/истории/закладок. Кнопка назад — popBackStack.
+ */
 class DrugDetailFragment : Fragment() {
 
     companion object {
@@ -28,6 +32,7 @@ class DrugDetailFragment : Fragment() {
     private var drug: Drug? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // препарат передаётся через arguments
         super.onCreate(savedInstanceState)
         drug = arguments?.getSerializable(ARG_DRUG) as? Drug
     }
@@ -51,7 +56,7 @@ class DrugDetailFragment : Fragment() {
         val descriptionText = view.findViewById<TextView>(R.id.text_description)
 
         backButton.setOnClickListener {
-            parentFragmentManager.popBackStack()
+            parentFragmentManager.popBackStack() // закрыть карточку
         }
 
         val item = drug ?: return

@@ -9,6 +9,10 @@ import android.widget.TextView
 import com.example.domain.model.Drug
 import com.example.mobile.R
 
+/**
+ * Адаптер списка результатов поиска. Отображает препарат: название, производитель, цена.
+ * Callback при клике на строку (открыть карточку) и при клике на кнопку «в закладки».
+ */
 class SearchResultsAdapter(
     context: Context,
     items: MutableList<Drug>
@@ -16,7 +20,9 @@ class SearchResultsAdapter(
 
     private val inflater = LayoutInflater.from(context)
 
+    /** Вызывается при нажатии кнопки «в закладки» у элемента */
     var onAddToBookmark: ((Drug) -> Unit)? = null
+    /** Вызывается при клике по строке — открыть карточку препарата */
     var onItemClick: ((Drug) -> Unit)? = null
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {

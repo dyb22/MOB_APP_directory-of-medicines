@@ -6,6 +6,9 @@ import com.example.domain.model.Drug
 
 private const val PRICE_ZERO = "0 рублей"
 
+/**
+ * Преобразование DTO OpenFDA в доменную модель Drug.
+ */
 fun DrugResultDto.toDomain(): Drug {
     val name = openFda?.brandName?.firstOrNull() ?: ""
     val manufacturer = openFda?.manufacturerName?.firstOrNull() ?: ""
@@ -22,6 +25,7 @@ fun DrugResultDto.toDomain(): Drug {
     )
 }
 
+/** DrugEntity (локальная БД) в Drug. */
 fun DrugEntity.toDomain(): Drug = Drug(
     id = id,
     name = name,

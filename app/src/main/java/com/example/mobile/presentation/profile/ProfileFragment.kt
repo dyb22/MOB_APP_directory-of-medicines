@@ -19,6 +19,10 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import kotlinx.coroutines.launch
 
+/**
+ * Экран профиля. Гость: форма входа и регистрации. Авторизован: имя и кнопка выхода.
+ * renderState пересобирает корневой контейнер. После выхода — refreshBookmarksAndHistory в MainActivity.
+ */
 class ProfileFragment : Fragment() {
 
     private var loggedIn = false
@@ -36,6 +40,7 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val root = view as FrameLayout
         viewLifecycleOwner.lifecycleScope.launch {
+            // проверить текущего пользователя и отрисовать форму или профиль
             val user = AppContainer.userRepository.getCurrentUser()
             loggedIn = user != null
             userName = user?.name
@@ -43,6 +48,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    // Экран входа или профиля с нуля
     private fun renderState(root: FrameLayout) {
         root.removeAllViews()
         val inflater = LayoutInflater.from(requireContext())
@@ -56,6 +62,7 @@ class ProfileFragment : Fragment() {
             val authErrorText = loginView.findViewById<TextView>(R.id.text_auth_error)
 
             fun addAuthLoadingOverlay(): View {
+                // оверлей поверх формы при отправке логина/регистрации
                 val loadingView = inflater.inflate(R.layout.view_loading_overlay, root, false)
                 root.addView(loadingView)
                 loadingView.bringToFront()
@@ -67,6 +74,7 @@ class ProfileFragment : Fragment() {
             }
 
             fun showAuthError(errorResId: Int) {
+                // красный текст ошибки под полями
                 authErrorText.setText(errorResId)
                 authErrorText.visibility = View.VISIBLE
             }

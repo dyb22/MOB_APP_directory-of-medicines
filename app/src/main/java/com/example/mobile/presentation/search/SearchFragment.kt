@@ -21,6 +21,11 @@ import com.example.mobile.presentation.SearchViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+/**
+ * Экран поиска препаратов. Поле ввода, кнопка камеры, список результатов.
+ * Подписывается на SearchViewModel.uiState. При клике — запись в историю и открытие карточки.
+ * Поддерживает состояние «нет сети» и оверлей загрузки.
+ */
 class SearchFragment : Fragment() {
 
     private val viewModel: SearchViewModel by viewModels {
@@ -36,6 +41,7 @@ class SearchFragment : Fragment() {
     private lateinit var loadingOverlay: View
     private lateinit var noNetworkContainer: View
     private lateinit var resultsAdapter: SearchResultsAdapter
+    /** Для повторного рендера в onResume (например после возврата с карточки) */
     private var lastUiState: SearchUiState? = null
 
     override fun onCreateView(
@@ -58,7 +64,7 @@ class SearchFragment : Fragment() {
         loadingOverlay = view.findViewById(R.id.loading_overlay)
         noNetworkContainer = view.findViewById(R.id.no_network_container)
 
-        // На всякий случай принудительно делаем оверлей полноэкранным.
+        // Оверлей на весь контейнер
         loadingOverlay.layoutParams = FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
@@ -73,7 +79,7 @@ class SearchFragment : Fragment() {
             (activity as? MainActivity)?.requestAddDrugToBookmark(drug)
         }
         resultsAdapter.onItemClick = { drug ->
-            // В историю попадают только препараты, открытые с экрана поиска
+            // Запись в историю и открытие карточки
             viewLifecycleOwner.lifecycleScope.launch {
                 AppContainer.drugRepository.addToSearchHistory(drug)
             }
@@ -81,18 +87,19 @@ class SearchFragment : Fragment() {
         }
         resultsList.adapter = resultsAdapter
 
-        // Кнопка камеры открывает системное приложение камеры.
+        // Системная камера
         cameraButton.setOnClickListener {
             openCamera()
         }
 
-        // Запуск поиска по нажатию Enter (действие "Поиск" на клавиатуре)
+        // Поиск по действию на клавиатуре
         searchInput.setOnEditorActionListener { _, _, _ ->
             triggerSearch()
             true
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
+            // Подписка на состояние поиска
             viewModel.uiState.collectLatest { state ->
                 lastUiState = state
                 renderState(state)
@@ -102,14 +109,16 @@ class SearchFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        lastUiState?.let { renderState(it) }
+        lastUiState?.let { renderState(it) } // восстановить UI после возврата
     }
 
+    /** Читает текст из поля и запускает поиск через ViewModel */
     private fun triggerSearch() {
         viewModel.onQueryChanged(searchInput.text.toString())
         viewModel.onSearchClicked()
     }
 
+    /** Запуск системного приложения камеры (ACTION_IMAGE_CAPTURE) */
     private fun openCamera() {
         val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
         val packageManager = requireContext().packageManager
@@ -118,6 +127,7 @@ class SearchFragment : Fragment() {
         }
     }
 
+    /** Отображает состояние: загрузка, результаты, пусто, нет сети */
     private fun renderState(state: SearchUiState) {
         if (state.isNoNetwork) {
             showNoNetworkState()
@@ -147,7 +157,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun showNoNetworkState() {
-        // Отключаем все элементы, оставляя только сообщение об отсутствии сети.
+        // Только блок «нет сети»
         noNetworkContainer.visibility = View.VISIBLE
         loadingOverlay.visibility = View.GONE
         resultsTitle.visibility = View.GONE

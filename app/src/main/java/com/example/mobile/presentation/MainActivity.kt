@@ -19,25 +19,34 @@ import com.example.mobile.presentation.profile.ProfileFragment
 import com.example.mobile.presentation.search.SearchFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
+/**
+ * Главная Activity приложения. Управляет нижней навигацией и переключением фрагментов.
+ * Содержит логику отображения карточек препаратов и деталей закладок в back stack.
+ * Координирует передачу препарата из поиска в закладки при добавлении.
+ */
 class MainActivity : AppCompatActivity() {
 
+    /** Препарат, ожидающий добавления в папку закладок (выбор папки на экране BookmarksFragment) */
     private var pendingDrugForBookmark: Drug? = null
 
+    /** Четыре основных фрагмента, добавляются при первом создании и переключаются hide/show */
     private lateinit var searchFragment: SearchFragment
     private lateinit var bookmarksFragment: BookmarksFragment
     private lateinit var historyFragment: HistoryFragment
     private lateinit var profileFragment: ProfileFragment
 
+    /** Текущий видимый фрагмент из четырёх вкладок */
     private var currentFragment: Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AppContainer.init(applicationContext)
+        AppContainer.init(applicationContext) // applicationContext для хранилищ
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
 
+        // Создание фрагментов один раз, при повороте — восстановление по тегам
         if (savedInstanceState == null) {
             searchFragment = SearchFragment()
             bookmarksFragment = BookmarksFragment()
@@ -62,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         bottomNavigation.setOnItemSelectedListener { item ->
-            // Закрываем экран открытой закладки/карточки при переключении вкладки
+            // Сброс back stack при смене вкладки
             supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
             when (item.itemId) {
                 R.id.navigation_search -> {
@@ -76,8 +85,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.navigation_history -> {
                     showFragment(historyFragment, TAG_HISTORY)
-                    // При каждом переходе на вкладку истории явно обновляем список
-                    historyFragment.refreshHistory()
+                    historyFragment.refreshHistory() // актуальный список с сервера/файла
                     true
                 }
                 R.id.navigation_profile -> {
@@ -95,6 +103,7 @@ class MainActivity : AppCompatActivity() {
         bottomNavigation.post { removeItemRipple(bottomNavigation) }
     }
 
+    /** Показать один фрагмент, скрыть остальные. Без анимации. */
     private fun showFragment(fragment: Fragment, tag: String) {
         if (currentFragment == fragment) return
         supportFragmentManager.beginTransaction().apply {
@@ -105,32 +114,33 @@ class MainActivity : AppCompatActivity() {
         currentFragment = fragment
     }
 
+    // После смены аккаунта в профиле
     fun refreshBookmarksAndHistory() {
         bookmarksFragment.refreshBookmarks()
         historyFragment.refreshHistory()
     }
 
-    /** Вызвать с экрана поиска: перейти на закладки и запомнить препарат для добавления. */
+    // Закладки: сохранить препарат до выбора папки
     fun requestAddDrugToBookmark(drug: Drug) {
         pendingDrugForBookmark = drug
         showFragment(bookmarksFragment, TAG_BOOKMARKS)
         findViewById<BottomNavigationView>(R.id.bottom_navigation).selectedItemId = R.id.navigation_bookmarks
     }
 
-    /** Текущий препарат, ожидающий добавления в закладку (без очистки). */
+    /** Возвращает препарат, ожидающий добавления, без очистки */
     fun getPendingDrugForBookmark(): Drug? = pendingDrugForBookmark
 
-    /** Забрать и обнулить препарат для добавления в закладку. */
+    /** Забирает препарат и обнуляет. Вызывается после добавления в папку. */
     fun getAndClearPendingDrugForBookmark(): Drug? =
         pendingDrugForBookmark.also { pendingDrugForBookmark = null }
 
-    /** Вернуться на экран поиска (после добавления препарата в закладку). */
+    /** Переключение на вкладку поиска после добавления препарата в закладку */
     fun switchToSearch() {
         showFragment(searchFragment, TAG_SEARCH)
         findViewById<BottomNavigationView>(R.id.bottom_navigation).selectedItemId = R.id.navigation_search
     }
 
-    /** Открыть карточку препарата поверх текущего экрана. fragmentToHide — фрагмент поверх которого открываем (например BookmarkDetailFragment). */
+    // Карточка в back stack поверх текущего фрагмента
     fun openDrugDetail(drug: Drug, fragmentToHide: Fragment? = null) {
         val toHide = fragmentToHide ?: currentFragment!!
         val detail = DrugDetailFragment.newInstance(drug)
@@ -141,7 +151,7 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
-    /** Открыть содержимое закладки (список препаратов). */
+    // Список препаратов выбранной папки
     fun openBookmarkDetail(bookmark: Bookmark) {
         val detail = BookmarkDetailFragment.newInstance(bookmark)
         supportFragmentManager.beginTransaction()
@@ -151,6 +161,7 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
+    /** Убирает ripple-эффект с пунктов нижней навигации */
     private fun removeItemRipple(bottomNavigation: BottomNavigationView) {
         val menuView = bottomNavigation.getChildAt(0) as? ViewGroup ?: return
         for (i in 0 until menuView.childCount) {

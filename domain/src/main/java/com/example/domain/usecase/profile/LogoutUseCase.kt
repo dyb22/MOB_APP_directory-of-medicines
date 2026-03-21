@@ -2,6 +2,7 @@ package com.example.domain.usecase.profile
 
 import com.example.domain.repository.UserRepository
 
+/** Выход из аккаунта. */
 class LogoutUseCase(
     private val repository: UserRepository
 ) {

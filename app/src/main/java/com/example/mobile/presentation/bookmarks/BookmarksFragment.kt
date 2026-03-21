@@ -21,6 +21,11 @@ import com.example.mobile.di.AppContainer
 import com.example.mobile.presentation.MainActivity
 import kotlinx.coroutines.launch
 
+/**
+ * Экран списка папок закладок. Toolbar с меню создания папки.
+ * Клик по папке: если есть pendingDrug — добавить и вернуться на поиск; иначе — открыть содержимое.
+ * Долгое нажатие: удаление или переименование папки через диалоги.
+ */
 class BookmarksFragment : Fragment() {
 
     private val bookmarks = mutableListOf<Bookmark>()
@@ -29,7 +34,7 @@ class BookmarksFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
+        setHasOptionsMenu(true) // меню с кнопкой создания папки
     }
 
     override fun onCreateView(
@@ -61,7 +66,7 @@ class BookmarksFragment : Fragment() {
             val bookmark = adapter.getItem(position) ?: return@setOnItemClickListener
             val mainActivity = activity as? MainActivity ?: return@setOnItemClickListener
             val pendingDrug = mainActivity.getPendingDrugForBookmark()
-            if (pendingDrug != null) {
+            if (pendingDrug != null) { // добавить в выбранную папку
                 lifecycleScope.launch {
                     AppContainer.drugRepository.addDrugToBookmark(bookmark.id, pendingDrug)
                     mainActivity.getAndClearPendingDrugForBookmark()
@@ -84,8 +89,7 @@ class BookmarksFragment : Fragment() {
                 .setTitle(bookmark.name)
                 .setItems(options) { _, which ->
                     when (which) {
-                        0 -> {
-                            // Delete
+                        0 -> { // удаление
                             AlertDialog.Builder(requireContext())
                                 .setMessage(R.string.bookmarks_dialog_delete_message)
                                 .setPositiveButton(R.string.bookmarks_dialog_delete_confirm) { _, _ ->
@@ -98,8 +102,7 @@ class BookmarksFragment : Fragment() {
                                 .show()
                         }
 
-                        else -> {
-                            // Rename
+                        else -> { // переименование
                             val editText = EditText(requireContext()).apply {
                                 setText(bookmark.name)
                                 setSelection(bookmark.name.length)
@@ -134,11 +137,12 @@ class BookmarksFragment : Fragment() {
         loadBookmarks()
     }
 
-    /** Обновить список закладок при переходе на вкладку (в т.ч. после выхода из профиля). */
+    // Вызов из MainActivity при открытии вкладки
     fun refreshBookmarks() {
         if (isAdded) loadBookmarks()
     }
 
+    /** Загрузка папок из репозитория (Firestore или гость) */
     private fun loadBookmarks() {
         lifecycleScope.launch {
             val list = AppContainer.drugRepository.getBookmarks()
@@ -169,6 +173,7 @@ class BookmarksFragment : Fragment() {
         }
     }
 
+    /** Диалог ввода имени новой папки закладок */
     private fun showCreateBookmarkDialog() {
         val editText = EditText(requireContext()).apply {
             hint = getString(R.string.bookmarks_dialog_hint)

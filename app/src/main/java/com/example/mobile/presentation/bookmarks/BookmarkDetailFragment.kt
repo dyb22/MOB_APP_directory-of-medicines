@@ -17,6 +17,11 @@ import com.example.mobile.di.AppContainer
 import com.example.mobile.presentation.MainActivity
 import kotlinx.coroutines.launch
 
+/**
+ * Экран содержимого папки закладок: список препаратов.
+ * Открывается поверх BookmarksFragment из MainActivity.openBookmarkDetail.
+ * При клике по препарату — DrugDetailFragment поверх этого фрагмента.
+ */
 class BookmarkDetailFragment : Fragment() {
 
     companion object {
@@ -62,7 +67,7 @@ class BookmarkDetailFragment : Fragment() {
 
         titleText.text = bookmarkName
         backButton.setOnClickListener {
-            parentFragmentManager.popBackStack()
+            parentFragmentManager.popBackStack() // назад к списку папок
         }
 
         val drugs = mutableListOf<Drug>()
@@ -87,12 +92,14 @@ class BookmarkDetailFragment : Fragment() {
     }
 
     override fun onResume() {
+        // обновить список при возврате на экран
         super.onResume()
         loadDrugs()
     }
 
     private fun loadDrugs() {
         lifecycleScope.launch {
+            // Firestore или локальный гость
             val list = AppContainer.drugRepository.getDrugsInBookmark(bookmarkId)
             adapter.clear()
             adapter.addAll(list)

@@ -12,6 +12,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel экрана поиска. Управляет состоянием: запрос, загрузка, результаты, сетевая ошибка.
+ * Отменяет предыдущий поиск при новом запросе. Сетевые исключения преобразует в isNoNetwork.
+ */
 class SearchViewModel(
     private val searchDrugsUseCase: SearchDrugsUseCase
 ) : ViewModel() {
@@ -19,15 +23,18 @@ class SearchViewModel(
     private val _uiState = MutableStateFlow(SearchUiState())
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
 
+    /** Job текущего поиска, для отмены при повторном нажатии */
     private var searchJob: Job? = null
 
+    /** Обновление текста запроса в состоянии (без запуска поиска) */
     fun onQueryChanged(query: String) {
         _uiState.value = _uiState.value.copy(query = query)
     }
-//rgrge
+
+    /** Запуск поиска. Отменяет предыдущий, устанавливает isLoading. */
     fun onSearchClicked() {
         val query = _uiState.value.query
-        searchJob?.cancel()
+        searchJob?.cancel() // отмена предыдущего поиска
         searchJob = viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
                 isLoading = true,
@@ -43,6 +50,7 @@ class SearchViewModel(
                     isNoNetwork = false
                 )
             }.onFailure { error ->
+                // isNoNetwork по цепочке cause
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     results = emptyList(),
@@ -52,6 +60,7 @@ class SearchViewModel(
         }
     }
 
+    /** Проверка: это сетевая ошибка (UnknownHost, Connect, SocketTimeout или cause) */
     private fun Throwable.isNetworkError(): Boolean {
         var current: Throwable? = this
         while (current != null) {

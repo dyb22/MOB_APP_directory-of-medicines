@@ -5,6 +5,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.domain.usecase.drug.SearchDrugsUseCase
 import com.example.mobile.presentation.search.SearchViewModel
 
+/**
+ * Фабрика для создания SearchViewModel с SearchDrugsUseCase.
+ * Используется во viewModels { } в SearchFragment.
+ */
 class SearchViewModelFactory(
     private val searchDrugsUseCase: SearchDrugsUseCase
 ) : ViewModelProvider.Factory {

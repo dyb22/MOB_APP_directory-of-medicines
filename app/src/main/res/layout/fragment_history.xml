@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:gravity="center"
+        app:titleCentered="true"
         app:title="@string/history_title" />
 
     <TextView

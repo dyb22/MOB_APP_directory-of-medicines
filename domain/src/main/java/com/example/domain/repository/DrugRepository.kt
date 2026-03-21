@@ -4,6 +4,10 @@ import com.example.domain.model.Bookmark
 import com.example.domain.model.Drug
 import com.example.domain.model.SearchHistoryItem
 
+/**
+ * Репозиторий препаратов и закладок. Поиск (OpenFDA), папки закладок, препараты в папках,
+ * история просмотров. Реализация: Firestore для авторизованных, JSON для гостей.
+ */
 interface DrugRepository {
     suspend fun searchDrugs(query: String): List<Drug>
     suspend fun getDrugById(id: String): Drug?

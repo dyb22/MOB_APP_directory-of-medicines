@@ -16,6 +16,10 @@ import com.example.mobile.presentation.MainActivity
 import com.example.mobile.presentation.search.SearchResultsAdapter
 import kotlinx.coroutines.launch
 
+/**
+ * Экран истории просмотров. Список препаратов, открытых с экрана поиска.
+ * Пустой текст при отсутствии записей. Клик — карточка, кнопка — добавить в закладки.
+ */
 class HistoryFragment : Fragment() {
 
     private val historyDrugs = mutableListOf<Drug>()
@@ -49,8 +53,7 @@ class HistoryFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // Обновляем историю при возврате на экран (например, после сворачивания приложения)
-        loadHistory()
+        loadHistory() // данные после возврата на экран
     }
 
     override fun onDestroyView() {
@@ -58,6 +61,7 @@ class HistoryFragment : Fragment() {
         super.onDestroyView()
     }
 
+    /** Показать «пусто» или список в зависимости от наличия данных */
     private fun updateEmptyState() {
         if (historyDrugs.isEmpty()) {
             emptyText.visibility = View.VISIBLE
@@ -68,6 +72,7 @@ class HistoryFragment : Fragment() {
         }
     }
 
+    /** Загрузка истории из репозитория, обновление адаптера */
     private fun loadHistory() {
         viewLifecycleOwner.lifecycleScope.launch {
             val items = AppContainer.drugRepository.getSearchHistory()
@@ -80,7 +85,7 @@ class HistoryFragment : Fragment() {
         }
     }
 
-    /** Внешний метод для явного обновления истории из активности. */
+    // Вызов из MainActivity
     fun refreshHistory() {
         if (isAdded) {
             loadHistory()

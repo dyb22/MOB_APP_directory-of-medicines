@@ -4,6 +4,7 @@ import com.example.data.storage.remote.dto.DrugSearchResponseDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 
+/** Поиск по query, limit результатов. */
 interface DrugApiService {
 
     @GET("drug/label.json")
