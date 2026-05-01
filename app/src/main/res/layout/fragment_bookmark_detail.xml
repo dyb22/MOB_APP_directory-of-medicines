@@ -31,11 +31,11 @@
 
         <ImageButton
             android:id="@+id/button_back"
-            android:layout_width="70dp"
-            android:layout_height="48dp"
+            android:layout_width="65dp"
+            android:layout_height="41dp"
             android:background="@drawable/bg_back_button"
-            android:scaleType="centerInside"
             android:contentDescription="@null"
+            android:scaleType="centerInside"
             android:src="@drawable/ic_back" />
 
         <TextView

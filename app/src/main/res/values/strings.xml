@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Mobile</string>
+    <string name="app_name">app</string>
 
     <!-- Bottom navigation -->
     <string name="nav_search">Поиск</string>
@@ -45,6 +45,8 @@
     <string name="profile_login_button">Продолжить</string>
     <string name="profile_register_button">Зарегистрироваться</string>
     <string name="profile_auth_error_invalid_credentials">Данные введены неверно либо такого пользователя не существует</string>
+    <string name="profile_register_error_weak_password">Пароль слишком короткий или слабый. Нужно не менее 6 символов.</string>
+    <string name="profile_register_error_invalid_input">Не удалось зарегистрироваться. Проверьте email и пароль (не короче 6 символов).</string>
     <string name="profile_auth_error_user_already_exists">Пользователь с таким email уже существует</string>
     <string name="profile_logout_button">Выйти</string>
     <string name="profile_user_name_example">Юрамба</string>

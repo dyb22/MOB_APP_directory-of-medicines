@@ -15,7 +15,7 @@ data class DrugResultDto(
     @SerializedName("indications_and_usage") val indicationsAndUsage: List<String>?
 )
 
-/** Вложенный объект: массивы brand_name, manufacturer_name */
+/**  массивы brand_name, manufacturer_name */
 data class OpenFdaDto(
     @SerializedName("brand_name") val brandName: List<String>?,
     @SerializedName("manufacturer_name") val manufacturerName: List<String>?

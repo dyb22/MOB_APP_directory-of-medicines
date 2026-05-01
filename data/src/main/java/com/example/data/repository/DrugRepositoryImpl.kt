@@ -60,7 +60,7 @@ class DrugRepositoryImpl(
     private val guestMutex = Mutex()
     private var guestCache: GuestState? = null
 
-    /** Чтение guest_data.json с диска (без блокировки Mutex) */
+    /** Чтение guest_data.json с диска  */
     private suspend fun getGuestStateLocked(): GuestState {
         return withContext(Dispatchers.IO) {
             if (!guestFile.exists()) return@withContext GuestState()

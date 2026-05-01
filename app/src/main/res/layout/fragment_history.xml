@@ -9,10 +9,10 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="87dp"
         android:gravity="center"
-        app:titleCentered="true"
-        app:title="@string/history_title" />
+        app:title="@string/history_title"
+        app:titleCentered="true" />
 
     <TextView
         android:id="@+id/empty_text"

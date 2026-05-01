@@ -9,7 +9,6 @@ import com.example.domain.repository.UserRepository
 /**
  * Контейнер зависимостей приложения. Хранит единственные экземпляры репозиториев.
  * Репозитории создаются лениво, не пропадают при переключении экранов.
- * Вызывать init() в MainActivity.onCreate() с applicationContext.
  */
 object AppContainer {
     private lateinit var appContext: Context

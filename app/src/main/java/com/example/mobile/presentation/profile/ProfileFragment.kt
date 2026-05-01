@@ -17,6 +17,7 @@ import com.example.mobile.presentation.MainActivity
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import kotlinx.coroutines.launch
 
 /**
@@ -142,9 +143,12 @@ class ProfileFragment : Fragment() {
                         removeAuthLoadingOverlay(loadingView)
                         renderState(root)
                     } catch (e: Exception) {
+                        // Текст входа (про «нет пользователя») сюда не подставляем — при регистрации Firebase
+                        // часто шлёт InvalidCredentialsException / WeakPassword при коротком пароле или email.
                         val errorRes = when (e) {
                             is FirebaseAuthUserCollisionException -> R.string.profile_auth_error_user_already_exists
-                            is FirebaseAuthInvalidCredentialsException -> R.string.profile_auth_error_invalid_credentials
+                            is FirebaseAuthWeakPasswordException -> R.string.profile_register_error_weak_password
+                            is FirebaseAuthInvalidCredentialsException -> R.string.profile_register_error_invalid_input
                             else -> null
                         }
 
