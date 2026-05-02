@@ -1,0 +1,22 @@
+# Gitea: Git + Issues + Wiki по репозиторию (часть требований к wiki можно закрыть так).
+# Запуск на ВМ: cd infra && cp .env.example .env && nano .env && docker compose up -d
+#
+# Веб: http://<IP_ВМ>:3000
+# Git по SSH: git clone ssh://git@<IP_ВМ>:2222/user/repo.git (после настройки ключей в Gitea)
+
+services:
+  gitea:
+    image: gitea/gitea:1.22
+    container_name: gitea
+    restart: unless-stopped
+    environment:
+      USER_UID: "1000"
+      USER_GID: "1000"
+      TZ: Europe/Moscow
+      GITEA__server__ROOT_URL: ${GITEA_ROOT_URL}
+      GITEA__database__DB_TYPE: sqlite3
+    ports:
+      - "3000:3000"
+      - "2222:22"
+    volumes:
+      - ./data/gitea:/data

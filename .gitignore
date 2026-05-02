@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Данные контейнеров (на сервере не коммитить)
+infra/data/
+infra/.env
