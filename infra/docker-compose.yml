@@ -1,8 +1,14 @@
-# Gitea: Git + Issues + Wiki по репозиторию (часть требований к wiki можно закрыть так).
-# Запуск на ВМ: cd infra && cp .env.example .env && nano .env && docker compose up -d
+# Стек: Gitea + Wiki.js + Drone (+ runner) + Prometheus + Grafana
+# Запуск: cd infra && cp .env.example .env && nano .env && docker compose up -d
 #
-# Веб: http://<IP_ВМ>:3000
-# Git по SSH: git clone ssh://git@<IP_ВМ>:2222/user/repo.git (после настройки ключей в Gitea)
+# Порты по умолчанию (замените HOST_IP в .env на свой):
+#   Gitea      http://HOST_IP:3000
+#   Wiki.js    http://HOST_IP:3080
+#   Drone      http://HOST_IP:9000  — после запуска создайте OAuth2-приложение в Gitea (см. .env.example)
+#   Grafana    http://HOST_IP:3001  (логин admin, пароль GRAFANA_ADMIN_PASSWORD)
+#   Prometheus http://HOST_IP:9090
+#
+# Git SSH (Gitea): git clone ssh://git@HOST_IP:2222/user/repo.git
 
 services:
   gitea:
@@ -20,3 +26,91 @@ services:
       - "2222:22"
     volumes:
       - ./data/gitea:/data
+
+  postgres-wiki:
+    image: postgres:15-alpine
+    container_name: postgres-wiki
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: wiki
+      POSTGRES_USER: wikijs
+      POSTGRES_PASSWORD: ${WIKIJS_DB_PASSWORD}
+    volumes:
+      - ./data/postgres-wiki:/var/lib/postgresql/data
+
+  wiki:
+    image: ghcr.io/requarks/wiki:2
+    container_name: wiki
+    restart: unless-stopped
+    depends_on:
+      - postgres-wiki
+    environment:
+      DB_TYPE: postgres
+      DB_HOST: postgres-wiki
+      DB_PORT: "5432"
+      DB_USER: wikijs
+      DB_PASS: ${WIKIJS_DB_PASSWORD}
+      DB_NAME: wiki
+    ports:
+      - "3080:3000"
+
+  drone:
+    image: drone/drone:2
+    container_name: drone
+    restart: unless-stopped
+    depends_on:
+      - gitea
+    ports:
+      - "9000:80"
+    volumes:
+      - ./data/drone:/data
+    environment:
+      DRONE_SERVER_PROTO: http
+      DRONE_SERVER_HOST: ${HOST_IP}:9000
+      DRONE_GITEA_SERVER: ${GITEA_ROOT_URL}
+      DRONE_GITEA_CLIENT_ID: ${DRONE_GITEA_CLIENT_ID}
+      DRONE_GITEA_CLIENT_SECRET: ${DRONE_GITEA_CLIENT_SECRET}
+      DRONE_RPC_SECRET: ${DRONE_RPC_SECRET}
+
+  drone-runner:
+    image: drone/drone-runner-docker:1
+    container_name: drone-runner
+    restart: unless-stopped
+    depends_on:
+      - drone
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data/drone-runner:/data
+    environment:
+      DRONE_RPC_PROTO: http
+      DRONE_RPC_HOST: drone
+      DRONE_RPC_SECRET: ${DRONE_RPC_SECRET}
+      DRONE_RUNNER_CAPACITY: "2"
+      DRONE_RUNNER_NAME: docker-runner
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: prometheus
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./data/prometheus:/prometheus
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    container_name: grafana
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      GF_SERVER_ROOT_URL: http://${HOST_IP}:3001/
+    volumes:
+      - ./data/grafana:/var/lib/grafana
