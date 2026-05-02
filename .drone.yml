@@ -1,0 +1,13 @@
+# Минимальный CI для Drone: проверяет, что runner и Git-интеграция работают.
+# Полноценная Android-сборка (./gradlew assembleDebug) в CI требует образ с Android SDK.
+
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  - name: check
+    image: alpine:3.20
+    commands:
+      - echo "MOB_APP_directory-of-medicines - Drone pipeline OK"
+      - uname -a
