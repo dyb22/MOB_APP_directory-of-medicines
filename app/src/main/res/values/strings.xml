@@ -50,6 +50,8 @@
     <string name="profile_auth_error_user_already_exists">Пользователь с таким email уже существует</string>
     <string name="profile_logout_button">Выйти</string>
     <string name="profile_user_name_example">Юрамба</string>
+    <string name="profile_user_id_placeholder">ID: —</string>
+    <string name="profile_user_id_format">ID: %1$s</string>
     <string name="profile_app_version_placeholder">Версия: —</string>
     <string name="profile_app_version_format">Версия: %1$s</string>
 </resources>

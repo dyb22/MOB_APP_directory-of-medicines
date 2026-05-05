@@ -29,6 +29,7 @@ class ProfileFragment : Fragment() {
 
     private var loggedIn = false
     private var userName: String? = null
+    private var userId: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,6 +47,7 @@ class ProfileFragment : Fragment() {
             val user = AppContainer.userRepository.getCurrentUser()
             loggedIn = user != null
             userName = user?.name
+            userId = user?.id
             renderState(root)
         }
     }
@@ -101,6 +103,7 @@ class ProfileFragment : Fragment() {
                         val user = AppContainer.userRepository.login(email, password)
                         loggedIn = true
                         userName = user.name
+                        userId = user.id
                         removeAuthLoadingOverlay(loadingView)
                         renderState(root)
                     } catch (e: Exception) {
@@ -141,6 +144,7 @@ class ProfileFragment : Fragment() {
                         val user = AppContainer.userRepository.register(email, password)
                         loggedIn = true
                         userName = user.name
+                        userId = user.id
                         removeAuthLoadingOverlay(loadingView)
                         renderState(root)
                     } catch (e: Exception) {
@@ -169,10 +173,12 @@ class ProfileFragment : Fragment() {
         } else {
             val profileView = inflater.inflate(R.layout.view_profile_info, root, false)
             val userNameText = profileView.findViewById<TextView>(R.id.text_user_name)
+            val userIdText = profileView.findViewById<TextView>(R.id.text_user_id)
             val appVersionText = profileView.findViewById<TextView>(R.id.text_app_version)
             val logoutButton = profileView.findViewById<Button>(R.id.button_logout)
 
             userNameText.text = userName ?: getString(R.string.profile_user_name_example)
+            userIdText.text = getString(R.string.profile_user_id_format, userId ?: "-")
             appVersionText.text = getString(R.string.profile_app_version_format, BuildConfig.VERSION_NAME)
 
             logoutButton.setOnClickListener {
@@ -180,6 +186,7 @@ class ProfileFragment : Fragment() {
                     AppContainer.userRepository.logout()
                     loggedIn = false
                     userName = null
+                    userId = null
                     renderState(root)
                     (activity as? MainActivity)?.refreshBookmarksAndHistory()
                 }
