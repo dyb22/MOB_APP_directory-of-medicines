@@ -58,6 +58,17 @@
             android:textAppearance="?attr/textAppearanceTitleMedium"
             android:textColor="@color/black" />
 
+        <!-- Версия приложения -->
+        <TextView
+            android:id="@+id/text_app_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:text="@string/profile_app_version_placeholder"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="@color/black" />
+
         <!-- Кнопка выхода -->
         <Button
             android:id="@+id/button_logout"

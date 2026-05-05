@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.example.mobile.BuildConfig
 import com.example.mobile.R
 import com.example.mobile.di.AppContainer
 import com.example.mobile.presentation.MainActivity
@@ -168,9 +169,11 @@ class ProfileFragment : Fragment() {
         } else {
             val profileView = inflater.inflate(R.layout.view_profile_info, root, false)
             val userNameText = profileView.findViewById<TextView>(R.id.text_user_name)
+            val appVersionText = profileView.findViewById<TextView>(R.id.text_app_version)
             val logoutButton = profileView.findViewById<Button>(R.id.button_logout)
 
             userNameText.text = userName ?: getString(R.string.profile_user_name_example)
+            appVersionText.text = getString(R.string.profile_app_version_format, BuildConfig.VERSION_NAME)
 
             logoutButton.setOnClickListener {
                 viewLifecycleOwner.lifecycleScope.launch {
