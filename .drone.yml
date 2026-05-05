@@ -11,13 +11,13 @@ steps:
   - name: repo-sanity
     image: alpine:3.20
     commands:
-      - echo "CI start: repository sanity checks"
+      - 'echo "CI start: repository sanity checks"'
       - test -f README.md
       - test -f gradlew
       - test -f settings.gradle.kts
       - test -f infra/docker-compose.yml
       - test ! -f infra/.env
-      - if git ls-files --error-unmatch infra/.env >/dev/null 2>&1; then echo "ERROR: infra/.env is tracked in git"; exit 1; fi
+      - 'if git ls-files --error-unmatch infra/.env >/dev/null 2>&1; then echo "ERROR: infra/.env is tracked in git"; exit 1; fi'
       - echo "Repository sanity checks passed"
 
   - name: validate-drone-yaml
