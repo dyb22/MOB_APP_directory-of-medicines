@@ -1,13 +1,34 @@
-# Минимальный CI для Drone: проверяет, что runner и Git-интеграция работают.
-# Полноценная Android-сборка (./gradlew assembleDebug) в CI требует образ с Android SDK.
+# Базовый, но полезный CI:
+# 1) проверка структуры репозитория и отсутствия утечки infra/.env в Git;
+# 2) валидация синтаксиса .drone.yml;
+# 3) smoke-check Gradle wrapper без Android SDK.
 
 kind: pipeline
 type: docker
 name: default
 
 steps:
-  - name: check
+  - name: repo-sanity
     image: alpine:3.20
     commands:
-      - echo "MOB_APP_directory-of-medicines - Drone pipeline OK"
-      - uname -a
+      - echo "CI start: repository sanity checks"
+      - test -f README.md
+      - test -f gradlew
+      - test -f settings.gradle.kts
+      - test -f infra/docker-compose.yml
+      - test ! -f infra/.env
+      - if git ls-files --error-unmatch infra/.env >/dev/null 2>&1; then echo "ERROR: infra/.env is tracked in git"; exit 1; fi
+      - echo "Repository sanity checks passed"
+
+  - name: validate-drone-yaml
+    image: mikefarah/yq:4
+    commands:
+      - yq e '.' .drone.yml >/dev/null
+      - echo ".drone.yml syntax is valid"
+
+  - name: gradle-wrapper-smoke
+    image: eclipse-temurin:17-jdk-alpine
+    commands:
+      - chmod +x ./gradlew
+      - ./gradlew --version
+      - echo "Gradle wrapper is runnable"
